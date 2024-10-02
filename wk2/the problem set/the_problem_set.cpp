@@ -55,21 +55,21 @@ struct SegmentTree {
     }
 
     // L and R: left and right bound
-    int querySum(int i, ll l, ll r, ll L, ll R) {
+    ll querySum(int i, ll l, ll r, ll L, ll R) {
         if (L > r || R < l) return 0;
         if (L <= l && R >= r) return t[i].sum;
         int m = (l + r) / 2;
         return querySum(2 * i + 1, l, m, L, R) + querySum(2 * i + 2, m + 1, r, L, R);
     }
 
-    int queryMax(int i, ll l, ll r, ll L, ll R) {
+    ll queryMax(int i, ll l, ll r, ll L, ll R) {
         if (L > r || R < l) return -1;
         if (L <= l && R >= r) return t[i].maxVal;
         int m = (l + r) / 2;
         return max(queryMax(2 * i + 1, l, m, L, R), queryMax(2 * i + 2, m + 1, r, L, R));
     }
 
-    int queryInc(int i, ll l, ll r, ll L, ll R, ll &lmax) {
+    bool queryInc(int i, ll l, ll r, ll L, ll R, ll &lmax) {
         if (L > r || R < l) return true;
         if (L <= l && R >= r) {
             if (t[i].inc && lmax <= t[i].minVal) {
@@ -83,11 +83,11 @@ struct SegmentTree {
         return queryInc(2 * i + 1, l, m, L, R, lmax) && queryInc(2 * i + 2, m + 1, r, L, R, lmax);
     }
 
-    int queryDec(int i, ll l, ll r, ll L, ll R, ll &lmin) {
+    bool queryDec(int i, ll l, ll r, ll L, ll R, ll &lmin) {
         if (L > r || R < l) return true;
         if (L <= l && R >= r) {
             if (t[i].dec && lmin >= t[i].maxVal) {
-                lmin = t[i].maxVal;
+                lmin = t[i].minVal;
                 return true;
             } else {
                 return false;
@@ -116,7 +116,7 @@ int main() {
     SegmentTree tree(N);
     tree.build(0, 0, N-1);
 
-    for (int j; j < M; j++) {
+    for (int j = 0; j < M; j++) {
         char cmd;
         ll x, y;
         cin >> cmd >> x >> y;
@@ -142,11 +142,7 @@ int main() {
                 cout << tree.queryDec(0, 0, N-1, x, y, lmin) << '\n';
                 break; 
             }
-            default:
-                break;
                 
         }
-
-
     }   
 } 
