@@ -5,17 +5,13 @@ using namespace std;
 const int MAXN = 10e5+5;
 ll arr[2][MAXN];
 ll dp[2][MAXN];
-int cnt = 0;
 
-int solve(int i, int r) {
-    cnt++;
+ll solve(int i, int r) {
     // base case
     if (i < 0) {
         return 0;
     }
-    if (i == 0) {
-        cout << "DP ARRAY ACCESSED\n";
-        cnt--;
+    if (i == 0) { 
         return arr[r][i];
     }
 
@@ -25,7 +21,6 @@ int solve(int i, int r) {
     }
 
     // recur
-    
     ll out = max(solve(i-2, 1-r), solve(i-1, 1-r)) + arr[r][i];
     dp[r][i] = out;
     return out;
@@ -46,12 +41,4 @@ int main() {
     }
 
     cout << max(solve(N-1, 0), solve(N-1, 1)) << endl;
-    cout << cnt << endl;
-
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < N; j++) {
-            cout << dp[i][j] << ' ';
-        } cout << endl;
-    }
-
 }
