@@ -2,7 +2,7 @@
 using namespace std;
 
 #define ll long long 
-const int MAXN = 10e5+5;
+const int MAXN = 1e5+5;
 ll arr[2][MAXN];
 ll dp[2][MAXN];
 
@@ -21,9 +21,8 @@ ll solve(int i, int r) {
     }
 
     // recur
-    ll out = max(solve(i-2, 1-r), solve(i-1, 1-r)) + arr[r][i];
-    dp[r][i] = out;
-    return out;
+    dp[r][i] = max(solve(i-2, 1-r), solve(i-1, 1-r)) + arr[r][i];
+    return dp[r][i];
 }
 int main() {
     cin.tie(nullptr);
