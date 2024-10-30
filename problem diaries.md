@@ -23,7 +23,7 @@ Since Arkady can only place one mark a day, you can then iterate backwards throu
 From by summing the differences, we can work out the total amount of marks stricly below water.
 
 ### The Fair Nut and Strings
-imma be real, i dont remember this one...
+when i wrote the code only god and i knew what was going on, now only god knows.
 
 ### Inversion Swapsort
 Considering bubble sort, each swap reduces the number of inversions by one. Thus, by running bubble sort an tracking the indexes being swapped, we can track the inversion swaps required to sort the array.
@@ -95,4 +95,7 @@ This question is identical to the segment cover question within the lecture slid
 
 After this, we follow the exact same steps as the solution within th lecture slides.
 
-
+## Week 4
+Week 4 problems: Graphs.
+### Heirarchy
+This question was quite a simple idea and could be solved without any graph knowledge. By using a greedy method
