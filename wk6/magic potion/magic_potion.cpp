@@ -2,12 +2,11 @@
 using namespace std;
 #define ll long long 
 
-const int MAX = 2500;
-const int N = 35;
+const int MAX = 1005; //TODO: fix limits
 const ll INF = 1e18;
-int terrain[26];
-char grid[N][N];
-int n, m, c;
+ll weights[MAX][MAX], level[MAX], uptochild[MAX];
+vector<ll> edges[MAX];
+int n, m, k;
 
 struct FlowNetwork {
     int n;
@@ -90,60 +89,40 @@ struct FlowNetwork {
     }
 };
 
+
 int main() {
+    cin >> n >> m >> k;
     FlowNetwork g(MAX);
-    cin >> n >> m >> c;
-    int source = -1;
-    int sink = MAX - 1;
-    int dx[] = {-1, 1, 0, 0}, dy[] = {0, 0, -1, 1};
-
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            cin >> grid[i][j];
+    ll source = MAX - 1;
+    ll sink = MAX - 2;
+    ll potions = MAX - 3;
+    ll heros = MAX - 4;
+    // heros: 1 to n
+    // monsters n to n+m
+    int x, y;
+    // hero to monster
+    for (int i = 1; i <= n; i++) {
+        cin >> x;
+        for (int j = 1; j <= x; j++) {
+            cin >> y;
+            g.add_edge(i, n+y, 1);
         }
     }
+    // source to potion source
+    g.add_edge(source, potions, k);
+    g.add_edge(source, heros, n);
 
-    for (int i = 0; i < c; i++) {
-        cin >> terrain[i];
+    for (int i = 1; i <= n; i++) {
+        // heros ability to hero
+        g.add_edge(heros, i, 1);
+        // potion source to hero
+        g.add_edge(potions, i, 1);
     }
 
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            int node = i * n + j;
-            char cell = grid[i][j];
-            if (cell == 'B') {
-                source = 2 * node;
-            }
-            int fromIn = 2 * node, fromOut = 2 * node + 1;
-            // vertex capacity
-            g.add_edge(fromIn, fromOut, (cell >= 'a' && cell <= 'z') ? terrain[cell - 'a'] : INF);
-
-            // if our cell is on the edge, connect to sink
-            if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
-                g.add_edge(fromOut, sink, INF);
-            }
-            // connect to all other grids
-            for (int d = 0; d < 4; d++) {
-                int ni = i + dx[d];
-                int nj = j + dy[d];
-                
-                if (ni >= 0 && ni < m && nj >= 0 && nj < n) {
-                    int newNode = ni * n + nj;
-                    int toIn = 2 * newNode;
-                    g.add_edge(fromOut, toIn, INF);
-                }
-            }
-
-                        
-        }
+    // monster to sink
+    for (int i = 1; i <= m; i++) {
+        g.add_edge(n+i, sink, 1);   
     }
 
-    // for (int i = 0; i < 2 * n * m; i++) {
-    //     for (auto u : edges[i]) {
-    //         printf("%d goes to %d with weight %lld\n", i, u, weights[i][u]);
-    //     }
-    // }
-    
-    ll out = g.dinic(source, sink);
-    cout << (out >= INF ? -1 : out)  << endl;
+    cout << g.dinic(source, sink) << endl;
 }
