@@ -4,7 +4,7 @@ using namespace std;
 #define t3l tuple<ll, ll, ll>
 #define pll pair<ll, ll>
 
-const int N = 505;
+const int N = 1005;
 const ll INF = 1e18;
 ll adj[N][N];
 ll dist[N][N];
