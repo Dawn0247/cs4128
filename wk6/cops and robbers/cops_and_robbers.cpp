@@ -2,7 +2,7 @@
 using namespace std;
 #define ll long long 
 
-const int MAX = 1225;
+const int MAX = 2500;
 const int N = 35;
 const int INF = 1e9;
 int capacity[MAX][MAX], level[MAX];
@@ -74,31 +74,43 @@ int main() {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             int node = i * n + j;
-            char fromCell = grid[i][j];
-            if (fromCell == 'B') {
-                source = node;
+            char cell = grid[i][j];
+            if (cell == 'B') {
+                source = 2 * node;
             }
+            int fromIn = 2 * node, fromOut = 2 * node + 1;
+            // vertex capacity
+            edges[fromIn].push_back(fromOut);
+            capacity[fromIn][fromOut] = (cell >= 'a' && cell <= 'z') ? terrain[cell - 'a'] : INF;
 
             // if our cell is on the edge, connect to sink
             if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
-                edges[node].push_back(sink);
-                capacity[node][sink] = INF;
+                edges[fromOut].push_back(sink);
+                capacity[fromOut][sink] = INF;
+
             }
             // connect to all other grids
             for (int d = 0; d < 4; d++) {
                 int ni = i + dx[d];
                 int nj = j + dy[d];
+                
                 if (ni >= 0 && ni < m && nj >= 0 && nj < n) {
-                    int neighbour = ni * n+ nj;
-                    char toCell = grid[ni][nj];
-                    edges[node].push_back(neighbour);
-                    capacity[node][neighbour] = (toCell >= 'a' && toCell <= 'z') ? terrain[toCell - 'a'] : INF;
+                    int newNode = ni * n + nj;
+                    int toIn = 2 * newNode;
+                    edges[fromOut].push_back(toIn);
+                    capacity[fromOut][toIn] = INF;
                 }
             }
 
                         
         }
     }
+
+    // for (int i = 0; i < 2 * n * m; i++) {
+    //     for (auto u : edges[i]) {
+    //         printf("%d goes to %d with weight %d\n", i, u, capacity[i][u]);
+    //     }
+    // }
     
     int out = dinic(source, sink);
     cout << (out >= INF ? -1 : out)  << endl;
