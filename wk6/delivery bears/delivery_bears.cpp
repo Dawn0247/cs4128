@@ -1,12 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long 
+#define ll long long
 
-const int MAX = 605; //TODO: fix limits
-const ll INF = 1e18;
+const int MAX = 55; //TODO: fix limits
+const double INF = 1e18;
 const int DXY[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-int n, m, k;
-string grid[MAX];
+int n, m, b;
+struct edge {
+    int from, to, weight;
+};
+vector<edge> edges;
 
 struct FlowNetwork {
     int n;
@@ -89,4 +92,30 @@ struct FlowNetwork {
     }
 };
 
-int flowGraph()
+bool cando(double X) {
+    X = X / b;
+    FlowNetwork g(n+1);
+    for (auto [u, v, w] : edges) {
+        g.add_edge(u, v, w/X);
+    }
+
+
+    return g.dinic(1, n) >= b;
+}
+
+int main() {
+    cin >> n >> m >> b;
+    int x, y, z;
+    for (int i = 0; i < m; i++) {
+        cin >> x >> y >> z;
+        edges.push_back({x, y, z});
+    }
+
+    double lo = 0, hi = 1e10;
+    for (int it = 0; it < 70; it ++) {
+        double mid = (lo + hi) / 2;
+        if (cando(mid)) lo = mid;
+        else hi = mid;
+    }
+    cout << setprecision(15) << hi << endl;
+}
