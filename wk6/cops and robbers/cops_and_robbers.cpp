@@ -4,8 +4,8 @@ using namespace std;
 
 const int MAX = 2500;
 const int N = 35;
-const int INF = 1e9;
-int capacity[MAX][MAX], level[MAX];
+const ll INF = 1e18;
+ll capacity[MAX][MAX], level[MAX];
 int terrain[26];
 char grid[N][N];
 vector<int> edges[MAX];
@@ -27,12 +27,12 @@ bool bfs(int source, int sink) {
     } return level[sink] != -1;
 }
 
-int dfs(int u, int flow, int sink) {
+ll dfs(int u, ll flow, int sink) {
     if (u == sink) return flow;
     for (int v : edges[u]) {
         if (level[v] == level[u] + 1 && capacity[u][v] > 0) {
-            int curFlow = min(flow, capacity[u][v]);
-            int tmpFlow = dfs(v, curFlow, sink);
+            ll curFlow = min(flow, capacity[u][v]);
+            ll tmpFlow = dfs(v, curFlow, sink);
             if (tmpFlow > 0) {
                 capacity[u][v] -= tmpFlow;
                 capacity[v][u] += tmpFlow;
@@ -43,20 +43,19 @@ int dfs(int u, int flow, int sink) {
     return 0;
 }
 
-int dinic(int source, int sink) {
-    int totalFlow = 0;
+ll dinic(int source, int sink) {
+    ll totalFlow = 0;
     while (bfs(source, sink)) {
-        while (int flow = dfs(source, INF, sink)) {
+        while (ll flow = dfs(source, INF, sink)) {
             totalFlow += flow;
         }
     }
     return totalFlow;
 }
 
-
 int main() {
     cin >> n >> m >> c;
-    fill_n(&capacity[0][0], MAX*MAX, 0);
+    fill_n(&capacity[0][0], MAX*MAX, 0LL);
     int source = -1;
     int sink = MAX - 1;
     int dx[] = {-1, 1, 0, 0}, dy[] = {0, 0, -1, 1};
@@ -108,11 +107,10 @@ int main() {
 
     // for (int i = 0; i < 2 * n * m; i++) {
     //     for (auto u : edges[i]) {
-    //         printf("%d goes to %d with weight %d\n", i, u, capacity[i][u]);
+    //         printf("%d goes to %d with weight %lld\n", i, u, capacity[i][u]);
     //     }
     // }
     
-    int out = dinic(source, sink);
+    ll out = dinic(source, sink);
     cout << (out >= INF ? -1 : out)  << endl;
-
 }
