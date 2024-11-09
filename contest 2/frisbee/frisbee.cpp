@@ -6,12 +6,12 @@ using namespace std;
 #define rep(i, n) for (int i = 0; i < n; i++)
 #define repOne(i, n) for (int i = 1; i <= n; i++)
 #define printArr(arr, n) rep(i, n) cout << arr[i] << ' '; cout << endl
-
+#define printArrOne(arr, n) repOne(i, n) cout << arr[i] << ' '; cout << endl
 
 const int N = 200005;
 const int MAX_VERTICES = 200005;
 vector<int> edges[N];
-vector<int> newEdges[N];
+set<int> newEdges[N];
 bool seen[N];
 int n;
 
@@ -20,29 +20,30 @@ int n;
 int dist[N];
 // previous node on a shortest path to the start
 // Useful for reconstructing shortest paths
-int prev[N];
+int prevNode[N];
 
 bool bfs(int start) {
+  fill(prevNode, prevNode + N, -2);
     fill(dist, dist+N, -1);
     dist[start] = 0;
-    prev[start] = -1;
+    prevNode[start] = -1;
 
     queue<int> q;
     q.push(start);
     while (!q.empty()) {
         int c = q.front();
         q.pop();
-        if (newEdges[c].size() > 1) return false;
+        if (newEdges[c].size() > 1) return true;
         for (int nxt : newEdges[c]) {
             // Push if we have not seen it already.
             if (dist[nxt] == -1) {
                 dist[nxt] = dist[c] + 1;
-                prev[nxt] = c;
+                prevNode[nxt] = c;
                 q.push(nxt);
             }
         }
     }
-    return true;
+    return false;
 }
 
 // we will number the vertices in the order we see them in the DFS
@@ -113,27 +114,30 @@ int main() {
 
     for (int v = 0; v < n; ++v) if (!dfs_index[v]) connect(v);
 
-    cout << scc_counter << endl;
-    printArr(which_scc, n);
-    
 
     for (int i = 0; i < n; i++) {
         for (int e : edges[i]) {
             if (which_scc[i] != which_scc[e]) {
-                newEdges[which_scc[i]].push_back(which_scc[e]);
+                newEdges[which_scc[i]].insert(which_scc[e]);
             }
         }
     }
     
 
     int start = which_scc[0];
-    cout << bfs(start) << endl;
-
-    for (int i = 1; i <= scc_counter; i++) {
-        for (int e : newEdges[i]) {
-            cout << i << ' ' << e << '\n';
-        }
+    bool multi = bfs(start);
+    if (bfs(start)) {
+      cout << "No\n";
+      return 0;
     }
+    
+    for (int i = 1; i <= scc_counter; i++) {
+      if (prevNode[i] == -2) {
+        cout << "No\n";
+        return 0;
+      }  
+    }
+
 
     cout << "Yes\n";
 
