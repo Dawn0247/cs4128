@@ -2,6 +2,5 @@
 using namespace std; 
 int main( ) 
 {  
-	int j = 8;
-    cout << __builtin_popcount(j) << endl;
+	cout << sqrt(8.0) << ' ' << (int) sqrt(8) << endl;
 }

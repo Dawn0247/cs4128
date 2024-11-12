@@ -46,20 +46,6 @@ bool bfs(int start) {
     return false;
 }
 
-// we will number the vertices in the order we see them in the DFS
-int dfs_index[MAX_VERTICES];
-// for each vertex, store the smallest number of any vertex we see
-// in its DFS subtree
-int lowlink[MAX_VERTICES];
-
-// explicit stack
-stack<int> s; // #include <stack>
-bool in_stack[MAX_VERTICES];
-
-// arbitrarily number the SCCs and remember which one things are in
-int scc_counter;
-int which_scc[MAX_VERTICES];
-
 void connect(int v) {
   // a static variable doesn't get reset between function calls
   static int i = 1;

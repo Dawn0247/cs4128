@@ -30,16 +30,28 @@ int work(int x) {
 }
 
 int main() {
-    int curr, cnt = 0;
-    cin >> curr;
-    int prev = curr;
     sieve();
-    while (prev != (curr = work(curr))) {
-        cout << prev << ' ' << curr << '\n';
-        cnt += (prev == curr * curr) ? 1 : 2;
-        prev = curr;
+    int p, cnt = 0;
+    cin >> p;
+
+    // sqrt until not perfect square, add 1 per step
+    int c = sqrt(p);
+    while (c != 1 && c*c == p) {
+        p = c;
+        c = sqrt(c);
+        cnt++;
     }
 
-    cout << curr << ' ' << cnt << endl;
+    // work the first step
+    c = work(p);
+    if (c != p) cnt += 2;  
+    p = c;
+
+    while (p != (c = work(c))) {
+        cnt++;
+        p = c;
+    }
+
+    cout << c << ' ' << cnt << endl;
     
 }
