@@ -3,6 +3,7 @@ using namespace std;
 #define ll long long
 const ll MOD = 1e9 + 7;
 int t;
+
 int m_pow(ll x, ll n, int m) {
     if (n == 0) return 1;
     ll a = m_pow(x, n/2, m);
