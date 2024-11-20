@@ -2,15 +2,15 @@
 using namespace std;
 #define ll long long
 #define debug(var) cerr<< #var << " = " << var << endl
-const int MAXN = 1000005;
-vector<int> pf(MAXN + 1, 1);
+vector<int> pf;
 map<int, int> f;
 
-void sieve() {
+void sieve(int n) {
+    pf.resize(n+1); fill(pf.begin(), pf.end(), 1);
     pf[0] = 0;
-    for (int i = 2; i <= MAXN; i++) {
+    for (int i = 2; i <= n; i++) {
         if (pf[i] == 1) {
-            for (int j = i; j <= MAXN; j+= i) {
+            for (int j = i; j <= n; j+= i) {
                 if (pf[j] == 1) pf[j] = i;
             }
         }
@@ -26,9 +26,9 @@ void primeFactorise(int x) {
 }
 
 int main() {
-    sieve();
     int p;
     cin >> p;
+    sieve(p);
     primeFactorise(p);
     int maxExp = 0, minVal = 1, firstExp = f.begin()->second, cnt = 0;
     bool flag = false;
