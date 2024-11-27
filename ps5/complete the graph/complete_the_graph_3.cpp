@@ -26,7 +26,7 @@ ll weights[N][N] = {0};
 pii pred[N];
 ll dist[N];
 priority_queue<edge> pq;
-int n, m, L, s, t, flag;
+int n, m, L, s, t;
 
 void dijkstras(int s, int t) {
     fill(pred, pred + N, make_pair(-1, 0));    
@@ -37,7 +37,7 @@ void dijkstras(int s, int t) {
         if (pred[cur.v].first != -1) continue;
         dist[cur.v] = cur.w;
         pred[cur.v] = {cur.u, cur.f};
-        // if (cur.u == t) return;
+        if (cur.u == t) return;
         // cout << cur.u << endl;
         for (edge nxt : edges[cur.v]) {
             if (pred[nxt.v].first == -1) pq.push({nxt.u, nxt.v, cur.w + weights[nxt.u][nxt.v], cur.p + nxt.p, nxt.f});
@@ -51,8 +51,6 @@ bool work() {
     }
 
     ll diff = L - dist[t];
-    ll orig = diff;
-    ll orig1 = dist[t];
     // debugArr(dist, n);
     // debugPairArr(pred, n);
 
@@ -66,8 +64,7 @@ bool work() {
         }
     }
     
-    // set current path to 
-    
+    // set current path to 1's
     int u = t, v;
     while (u != s) {
         v = pred[u].first;
@@ -90,7 +87,6 @@ bool work() {
             weights[v][u] += diff;
             
             dijkstras(s, t);
-
             if (dist[t] == L) {
                 break;
             }
@@ -105,11 +101,33 @@ bool work() {
         }
         u = v;
     }
-    return dist[t] == L;
+
+    // printPair(bt);
+
+    // for (int i = 0; i < n; i++) {
+    //     for (int j = 0; j < n; j++) {
+    //         cout << weights[i][j] << ' ';
+    //     }cout << endl;
+    // }
+
+    // for (int i = 0; i < n; i++) {
+    //     for (edge e : edges[i]) {
+    //         printf("%d to %d with weight %lld\n", e.u, e.v, e.w);
+    //     }
+    // }
+
+
+
+    if (dist[t] < L) {
+        return 0;
+    } else {
+        return 1;        
+    }
 
 }
 
-void display() {
+void displayResults() {
+    cout << "YES\n";
     for (int i = 0; i < n; i++) {
         for (int j = i + 1; j < n; j++) {
             if (weights[i][j] != 0) cout << i << ' ' << j << ' ' << weights[i][j] << endl;
@@ -120,15 +138,20 @@ void display() {
 int main() {
     cin >> n >> m >> L >> s >> t;
     int x, y, z;
+    bool res;
     vector<tuple<int, int, ll>> in;
     for (int i = 0; i < m; i++) {
         cin >> x >> y >> z;
-        in.emplace_back(x, y, z);
+        in.emplace_back(x,y,z);
         edges[x].push_back({x, y, (z ? z : 1), 1, (z ? 0 : 1)});
         edges[y].push_back({y, x, (z ? z : 1), 1, (z ? 0 : 1)});
         weights[x][y] = (z ? z : 1);
         weights[y][x] = (z ? z : 1);
     }
+
+
+
+    
     
 
     // for (int i = 0; i < n; i++) {
@@ -136,25 +159,30 @@ int main() {
     //         cout << weights[i][j] << ' ';
     //     }cout << endl;
     // }
-    bool res;
+
+
+    res = work();
+    if (res) {
+        displayResults();
+        return 0;
+    } 
+
+    swap(s,t);
+    for (int i = 0; i < n; i++) {
+        edges[i].clear();
+    }
+    for (auto [x, y, z] : in) {
+        edges[x].push_back({x, y, (z ? z : 1), 1, (z ? 0 : 1)});
+        edges[y].push_back({y, x, (z ? z : 1), 1, (z ? 0 : 1)});
+        weights[x][y] = (z ? z : 1);
+        weights[y][x] = (z ? z : 1);
+    }
     res = work();
 
-    if (!res) {
-        swap(s, t);
-        for (int i = 0; i < n; i++) edges[i].clear();
-        for (auto [x,y,z] : in) {
-            edges[x].push_back({x, y, (z ? z : 1), 1, (z ? 0 : 1)});
-            edges[y].push_back({y, x, (z ? z : 1), 1, (z ? 0 : 1)});
-            weights[x][y] = (z ? z : 1);
-            weights[y][x] = (z ? z : 1);
-        }
-        res = work();
-    }
-
     if (res) {
-        cout << "YES\n";
-        display();
-    } else {
-        cout << "NO\n";
-    }
+        displayResults();
+        return 0;
+    } 
+
+    cout << "NO\n";
 }
