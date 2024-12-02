@@ -4,7 +4,7 @@ using namespace std;
 const int INF = 1e9 + 7;
 
 struct Edge {
-    int to, color, cost;
+    int to, color, cost, mask;
 };
 
 struct State {

@@ -12,6 +12,12 @@ int m_pow(ll x, ll n, int m) {
     return a;
 }
 
+int m_pow(ll b, ll a, ll mod) {
+    int ans = 1;
+    for (;a;b*=b, a/=2) ans *= (a%2 ? b : 1);
+    return ans;
+}
+
 int main() {
     int n;
     ll toSub, currDiff;
