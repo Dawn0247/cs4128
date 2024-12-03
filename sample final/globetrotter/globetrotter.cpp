@@ -6,7 +6,7 @@ const int MAXN = 100005;
 const ll LL_INF = 1e18;
 const int I_INF = 1e9;
 int n,m,k;
-struct edge {
+struct Edge {
     int u;  // from
     int v;  // to
     ll  w;  // weight
@@ -28,7 +28,7 @@ struct state {
 ll dist[MAXN] = {0};
 int pred[MAXN] = {0};
 bool seen[MAXN] = {0};
-vector<edge> edges[MAXN];
+vector<Edge> edges[MAXN];
 priority_queue<state> pq;
 
 void dijkstra (int s) {
@@ -45,7 +45,7 @@ void dijkstra (int s) {
         seen[u] = true;
         pred[u] = cur.u;
         // relax all edges from v
-        for (edge nxt : edges[u]) { 
+        for (Edge nxt : edges[u]) { 
             int v = nxt.v, weight = nxt.w;
             ll nw = d;
             int nm = cur.m;

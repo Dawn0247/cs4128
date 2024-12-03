@@ -10,10 +10,10 @@ vector<Edge> adjList;
 vector<Edge> allEdges;
 vector<pair<int, int>> mstEdges;
 // union find
-struct DSU {
+struct UnionFind {
     vector<int> parent, rank;
 
-    DSU(int n) {
+    UnionFind(int n) {
         parent.resize(n);
         rank.resize(n, 0);
         for (int i = 0; i < n; ++i) {
@@ -51,7 +51,7 @@ void kruskal(int n) {
         return (a.weight == b.weight) ? a.p > b.p : a.weight < b.weight;
     });
 
-    DSU dsu(n);
+    UnionFind dsu(n);
     int mstWeight = 0;
 
     for (auto &edge : adjList) {

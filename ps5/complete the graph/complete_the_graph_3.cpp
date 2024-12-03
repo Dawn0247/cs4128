@@ -8,24 +8,24 @@ using namespace std;
 #define debug(x) cout << "DEBUG: " << x << endl
 #define printPair(p) cout << #p << ": " << p.first << ' ' << p.second << endl
 
-struct edge {
+struct Edge {
     int u;  // from
     int v;  // to
     ll  w;  // weight
     int p;  // priority
     int f;  // is erasable
-    bool operator < (const edge &other) const {
+    bool operator < (const Edge &other) const {
         return (other.w == w) ? other.p < p : other.w < w ;
     }
 };
 const int M = 100005;
 const int N = 1005;
 const ll INF = 1e15;
-vector<edge> edges[M];
+vector<Edge> edges[M];
 ll weights[N][N] = {0};
 pii pred[N];
 ll dist[N];
-priority_queue<edge> pq;
+priority_queue<Edge> pq;
 int n, m, L, s, t;
 
 void dijkstras(int s, int t) {
@@ -33,13 +33,13 @@ void dijkstras(int s, int t) {
     fill(dist, dist+N, 0);
     pq.push({-1, s, 0, 0, 0});
     while (!pq.empty()) {
-        edge cur = pq.top(); pq.pop();
+        Edge cur = pq.top(); pq.pop();
         if (pred[cur.v].first != -1) continue;
         dist[cur.v] = cur.w;
         pred[cur.v] = {cur.u, cur.f};
         if (cur.u == t) return;
         // cout << cur.u << endl;
-        for (edge nxt : edges[cur.v]) {
+        for (Edge nxt : edges[cur.v]) {
             if (pred[nxt.v].first == -1) pq.push({nxt.u, nxt.v, cur.w + weights[nxt.u][nxt.v], cur.p + nxt.p, nxt.f});
         }
     }
@@ -56,7 +56,7 @@ bool work() {
 
     // fuckfuckfuckfuckfuckfuckfuckfuckfuckfuck
     for (int i = 0; i < n; i++) {
-        for (edge e : edges[i]) {
+        for (Edge e : edges[i]) {
             if (e.f) {
                 weights[e.u][e.v] = INF;
                 weights[e.v][e.u] = INF;

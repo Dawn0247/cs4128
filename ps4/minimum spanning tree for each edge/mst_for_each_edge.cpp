@@ -1,163 +1,184 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
+#include <bits/stdc++.h>
+#define ll long long
+#define pii pair<int, int>
+#define pll pair<ll,ll>
+#define repRange(x,y,i) for (int i = x; i < y; i++)
+#define printArr(n, arr) repRange(0, n, i) { cerr << arr[i] << ' '; } cerr << endl
+#define print2DArr(n, m, arr) repRange(0, n, j) { printArr(m, arr[j]); }
+#define printPairArr(n, arr) repRange(0, n, i) { cerr << arr[i].first << ' ' << arr[i].second << '\n'; };
+#define debug(var) cerr << #var << ": " <<  var << endl
+#define flag(i) cerr << "Flag: " << i << endl;
 
 using namespace std;
 
-struct Edge {
-    int from, to, weight;
-    Edge(int from, int to, int weight) : from(from), to(to), weight(weight) {}
-};
 
-bool compareEdges(const Edge& a, const Edge& b) {
-    return a.weight < b.weight;
-}
+const int MAXN = 1e5 + 5;  // Maximum number of nodes
+const int MAXLOG = 17;        // log2(MAXN) is around 17 for MAXN = 1e5
 
-int getWeight(int u, int v) {
-    for (Edge e 
-}
+vector<int> edges[MAXN];
+map<ll, ll> edgeWeightMap;
+int parent[MAXN][MAXLOG];         // up[v][j] is the 2^j-th ancestor of node v
+ll maxWeights[MAXN][MAXLOG] = {0};
+int depth[MAXN];
+
+
 
 struct DSU {
-    vector<int> parent, rank;
+    std::vector<int> parent, size;
 
-    DSU(int n) {
-        parent.resize(n);
-        rank.resize(n, 1);
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
-        }
+    DSU(int n) : parent(n), size(n, 1) {
+        for (int i = 0; i < n; ++i) parent[i] = i;
     }
 
     int find(int x) {
-        if (parent[x] != x) {
-            parent[x] = find(parent[x]);
-        }
-        return parent[x];
+        return parent[x] == x ? x : (parent[x] = find(parent[x]));
     }
 
     void unite(int x, int y) {
-        int rootX = find(x);
-        int rootY = find(y);
+        int rootX = find(x), rootY = find(y);
         if (rootX != rootY) {
-            if (rank[rootX] > rank[rootY]) {
-                parent[rootY] = rootX;
-            } else if (rank[rootX] < rank[rootY]) {
-                parent[rootX] = rootY;
-            } else {
-                parent[rootY] = rootX;
-                rank[rootX]++;
-            }
+            if (size[rootX] > size[rootY]) swap(rootX, rootY);
+            parent[rootX] = rootY;
+            size[rootY] += size[rootX];
         }
     }
 };
 
-struct LCA {
-    int n, maxLog;
-    vector<Edge> adj[100005];  // adjacency list of the tree with edges (array of vectors)
-    vector<vector<int>> up;    // up[i][j] stores the 2^j-th ancestor of node i
-    vector<int> depth;         // stores the depth of each node
-
-    LCA(int n) {
-        this->n = n;
-        maxLog = ceil(log2(n));
-        up.assign(n + 1, vector<int>(maxLog + 1, -1));
-        depth.resize(n + 1);
-    }
-
-    void addEdge(int u, int v, int w) {
-        adj[u].emplace_back(u, v, w);
-        adj[v].emplace_back(v, u, w);
-    }
-
-    void dfs(int node, int parent) {
-        up[node][0] = parent; // direct parent
-        for (int i = 1; i <= maxLog; i++) {
-            if (up[node][i - 1] != -1) {
-                up[node][i] = up[up[node][i - 1]][i - 1];
-            }
-        }
-        for (const Edge& edge : adj[node]) {
-            int neighbor = edge.to;
-            if (neighbor != parent) {
-                depth[neighbor] = depth[node] + 1;
-                dfs(neighbor, node);
-            }
-        }
-    }
-
-    void preprocess(int root) {
-        depth[root] = 0;
-        dfs(root, -1);
-    }
-
-    int getLCA(int u, int v) {
-        if (depth[u] < depth[v]) {
-            swap(u, v);
-        }
-
-        // Lift u to the same depth as v
-        int diff = depth[u] - depth[v];
-        for (int i = 0; i <= maxLog; i++) {
-            if ((diff >> i) & 1) {
-                u = up[u][i];
-            }
-        }
-
-        if (u == v) {
-            return u;
-        }
-        int mxm = 0;
-        // Lift both u and v until their ancestors match
-        for (int i = maxLog; i >= 0; i--) {
-            if (up[u][i] != up[v][i]) {
-                u = up[u][i];
-                v = up[v][i];
-            }
-        }
-
-        return up[u][0];
+struct Edge {
+    int u, v; 
+    ll weight;
+    bool operator<(const Edge& other) const {
+        return weight < other.weight;
     }
 };
+
+vector<Edge> allEdges;
+int n, m;
+
+// Kruskal's Algorithm using DSU
+vector<Edge> kruskal() {
+    DSU dsu(m);
+    vector<Edge> krusEdges = vector<Edge>(allEdges);
+    sort(krusEdges.begin(), krusEdges.end());
+
+    vector<Edge> mst;
+
+    for (auto edge : krusEdges) {
+        if (dsu.find(edge.u) != dsu.find(edge.v)) {
+            dsu.unite(edge.u, edge.v);
+            mst.push_back(edge);
+        }
+    }
+
+    return mst;
+}
+
+ll cantors(int x, int y) {
+    return ((x+y)*(x+y+1))/2 + x*y;
+}   
+
+ll getMaxWeight(int u, int v) {
+    return edgeWeightMap[cantors(u, v)];
+}
+
+void dfs(int v, int p) {
+    parent[v][0] = p;  // The first ancestor (2^0) is the parent
+    maxWeights[v][0] = edgeWeightMap[cantors(p, v)];
+    for (int j = 1; j < MAXLOG; j++) {
+        if (parent[v][j - 1] != -1) {
+            parent[v][j] = parent[parent[v][j - 1]][j - 1];
+            if (parent[v][j] != -1) maxWeights[v][j] = max( maxWeights[v][j-1], maxWeights[parent[v][j-1]][j-1] );
+        } else {
+            parent[v][j] = -1;
+            // maxWeights[v][j] = 0;
+        }
+    }
+    for (int u : edges[v]) {
+        if (u != p) {
+            depth[u] = depth[v] + 1;
+            dfs(u, v);
+        }
+    }
+}
+
+ll lca(int u, int v) {
+    ll maxWeight = 0;
+    if (depth[u] < depth[v])
+        swap(u, v);
+
+    // Lift u up to the same level as v
+    int diff = depth[u] - depth[v];
+    for (int j = MAXLOG - 1; j >= 0; j--) {
+        if ((diff >> j) & 1) {
+            maxWeight = max(maxWeight, maxWeights[u][j]);
+            u = parent[u][j];        
+            // flag(1);    
+        }
+    }
+
+    if (u == v) return maxWeight;
+
+    // Lift u and v up until we find the LCA
+    for (int j = MAXLOG - 1; j >= 0; j--) {
+        maxWeight = max(maxWeight, maxWeights[u][j]);
+        maxWeight = max(maxWeight, maxWeights[v][j]);
+        if (parent[u][j] != parent[v][j]) {
+            u = parent[u][j];
+            v = parent[v][j];
+            // printArr(3, vector<int>({u,v,j}));
+            // debug(maxWeight);
+        }
+    }
+
+    return maxWeight;
+}
 
 
 int main() {
-    int n, m;
-    cin >> n >> m;
-    vector<Edge> edges;
+    ios::sync_with_stdio(false);
+    cin.tie(0);
 
-    // Reading edges
+    cin >> n >> m;
     for (int i = 0; i < m; i++) {
         int u, v, w;
         cin >> u >> v >> w;
-        u--; v--;
-        edges.emplace_back(u, v, w);
+        allEdges.push_back({u-1, v-1, w});
     }
 
-    // Finding MST using Kruskal's algorithm
-    sort(edges.begin(), edges.end(), compareEdges);
-    DSU dsu(n);
-    LCA lca(n);
+    vector<Edge> mst = kruskal();
+    ll mstWeight = 0;
+    for (auto [u,v,w] : mst) {
+        // cout << u << ' ' << v << ' ' << w << '\n';
+        edges[u].push_back(v);
+        edges[v].push_back(u);
+        edgeWeightMap[cantors(u,v)] = w;
+        mstWeight += w;
+    }   
 
-    for (const Edge& edge : edges) {
-        if (dsu.find(edge.from) != dsu.find(edge.to)) {
-            dsu.unite(edge.from, edge.to);
-            lca.addEdge(edge.from, edge.to, edge.weight);
-        }
+    fill_n(&parent[0][0], MAXN*MAXLOG, -1);
+    depth[0] = 0;
+    dfs(0, -1);  // Assuming node 0 is the root
+
+    // print2DArr(n, 6, maxWeights);
+    // cout << "PARENTS:\n";
+    // print2DArr(n, 6, parent);
+
+    // debug(lca(0, 1));
+    // debug(lca(0, 2));
+    // debug(lca(0, 3));
+    // debug(lca(1, 2));
+    // debug(lca(1, 4));
+    // debug(lca(2, 3));
+    // debug(lca(3, 4));
+
+    // debug(lca(1,6));
+    // debug(lca(6,1));
+    for (Edge e : allEdges) {
+        ll mxm = lca(e.u, e.v);
+        if (mxm != e.weight) cout <<  mstWeight - mxm + e.weight << endl;
+        else cout << mstWeight << endl;
     }
 
-    // Preprocessing to set up the binary lifting table
-    lca.preprocess(0); // assuming 0 is the root (1 in 1-based index)
-
-    // Queries
-    int q;
-    cin >> q;
-    while (q--) {
-        int u, v;
-        cin >> u >> v;
-        u--; v--;
-        cout << "LCA of " << (u + 1) << " and " << (v + 1) << ": " << (lca.getLCA(u, v) + 1) << endl;
-    }
 
     return 0;
 }

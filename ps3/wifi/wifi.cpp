@@ -12,11 +12,11 @@ vector<pll> ord[MAXN];
 ll dp[MAXN];
 
 
-struct SegmentTree {
+struct RangeTree {
 
     vector<ll> t;
 
-    SegmentTree(int n) {
+    RangeTree(int n) {
         t.resize(4 * n);
     }
 
@@ -73,7 +73,7 @@ int main() {
         }
     }
 
-    SegmentTree tree(N+1);
+    RangeTree tree(N+1);
     tree.build(0, 0, N);
 
     for (int i = 0; i <= N; i++) {

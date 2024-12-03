@@ -6,10 +6,10 @@ const int MAX = 55; //TODO: fix limits
 const double INF = 1e18;
 const int DXY[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 int n, m, b;
-struct edge {
+struct Edge {
     int from, to, weight;
 };
-vector<edge> edges;
+vector<Edge> edges;
 
 struct FlowNetwork {
     int n;

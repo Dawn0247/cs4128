@@ -6,7 +6,7 @@ const int MAXN = 10e5+5;
 int N, M;
 vector<ll> arr(MAXN);
 
-struct SegmentTree {
+struct RangeTree {
     struct Node {
         ll sum, maxVal, minVal;
         bool inc, dec;
@@ -14,7 +14,7 @@ struct SegmentTree {
 
     vector<Node> t;
 
-    SegmentTree(int n) {
+    RangeTree(int n) {
         t.resize(4 * n);
     }
 
@@ -113,7 +113,7 @@ int main() {
         cin >> arr[i];
     }
 
-    SegmentTree tree(N);
+    RangeTree tree(N);
     tree.build(0, 0, N-1);
 
     for (int j = 0; j < M; j++) {
