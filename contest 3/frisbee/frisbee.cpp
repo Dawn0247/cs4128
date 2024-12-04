@@ -9,7 +9,7 @@ using namespace std;
 #define printArrOne(arr, n) repOne(i, n) cout << arr[i] << ' '; cout << endl
 
 const int N = 200005;
-const int MAX_VERTICES = 200005;
+const int MAXN = 200005;
 vector<int> edges[N];
 set<int> newEdges[N];
 bool seen[N];
