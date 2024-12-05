@@ -130,15 +130,17 @@ Cell applyDelta(Cell b, Delta d) {
 }
 
 int toId(Cell b) {
-    return b.x + l*b.y + l*w*b.z;
+    return b.x + (l * b.y) + (l * w * b.z);
 }
 
 void constructOutEdge(Cell b) {
     for (auto [d, w] : deltas) {
         if (onBorder(b, d)) {
             g.add_edge(toId(b), snk, w);
+            // cerr << "EDGE constructed: " << b.x << ' ' << b.y << ' ' << b.z << " TO SINK WITH WEIGHT " << w << endl;
         } else {
             g.add_edge(toId(b), toId(applyDelta(b, d)), w);
+            // cerr << "EDGE constructed: " << b.x << ' ' << b.y << ' ' << b.z << " TO " << applyDelta(b, d).x << ' ' << applyDelta(b, d).y << ' ' << applyDelta(b, d).z <<  " WITH WEIGHT " << w <<endl;
         }
 
     }
@@ -148,12 +150,9 @@ void constructOutEdge(Cell b) {
 int main() {
     int a,b,c;
     cin >> l >> w >> h >> a >> b >> c >> n;
-    deltas[0].second = a;
-    deltas[1].second = a;
-    deltas[2].second = b;
-    deltas[3].second = b;
-    deltas[4].second = c;
-    deltas[5].second = c;
+    deltas[0].second = deltas[1].second = a;
+    deltas[2].second = deltas[3].second = b;
+    deltas[4].second = deltas[5].second = c;
 
     g = FlowNetwork(l*w*h + 2);
 
@@ -170,14 +169,17 @@ int main() {
     int x, y, z;
     for (int i = 0; i < n; i++) {
         cin >> x >> y >> z;
-        g.add_edge(snk, toId({x,y,z}), INF);
+        g.add_edge(src, toId({x,y,z}), INF);
     }
 
-    for (int from = 0; from < g.adjList.size(); from++) {
-        for (ll to : g.adjList[from]) {
-            cerr << from << ' ' << to << ' ' << g.adjMat[from][to] << endl;
-        }
+    int cnt = 0;
+    for (auto r : g.adjMat) {
+        for (auto w: r) {
+            cout << w << ' ';
+        } cout << endl;
     }
+
+    cout << g.dinic(src, snk) << endl;
     
     
 }

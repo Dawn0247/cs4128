@@ -11,7 +11,7 @@ for i in range(m):
     maxn = max(maxn, u, v)
     e.append([u,v,w])
 
-G = nx.DiGraph()
+G = nx.DiGraph()    
 G.add_nodes_from(range(minn, maxn+1))
 for u,v,w in e:
     G.add_edge(u, v, weight=w)
